@@ -17,7 +17,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             overflow-x: hidden;
-            background-color: #050505; /* Nero non assoluto per evitare banding */
+            background-color: #050505;
         }
         
         ::-webkit-scrollbar { display: none; }
@@ -29,18 +29,39 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .glass-panel {
-            background: #18181b; /* Colore di fallback se il video non parte */
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        /* LINEA STORIA SULLA SINISTRA */
+        .story-border {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255,255,255,0.1);
+        }
+        .story-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2px;
+            background: #eab308; /* Giallo */
+            height: 0%; /* Parte da 0 */
         }
 
-        /* Classe per forzare il video a coprire tutto */
-        video {
+        .glass-panel {
+            background: #18181b; 
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden; /* Fondamentale per non far uscire il video */
+        }
+
+        /* FIX PER LE BANDE NERE: Il video riempie tutto in assoluto */
+        .video-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
         }
 
         #loader {
@@ -72,10 +93,8 @@
     <!-- HERO SECTION -->
     <section class="h-screen w-full relative flex flex-col justify-center items-center px-4 overflow-hidden">
         
-        <!-- SFONDO HERO -->
         <div class="absolute inset-0 z-0 bg-zinc-900">
-            <!-- Playsinline è fondamentale per iPhone -->
-             <video autoplay loop muted playsinline preload="auto" class="w-full h-full object-cover blur-[50px] opacity-40 scale-105 video-bg">
+             <video autoplay loop muted playsinline preload="auto" class="w-full h-full object-cover blur-[50px] opacity-40 scale-105 video-hero">
                 <source src="asset/pancagara.mp4" type="video/mp4">
             </video>
             <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black"></div>
@@ -112,11 +131,17 @@
         </div>
     </section>
 
-    <!-- CAPITOLO 1 -->
-    <section class="py-24 px-6 md:px-10 max-w-7xl mx-auto relative group" id="chapter1">
+    <!-- CAPITOLO 1: POWERLIFTING -->
+    <section class="py-24 px-6 md:px-10 max-w-7xl mx-auto" id="chapter1">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-start">
             
-            <div class="md:sticky md:top-32 md:pl-12">
+            <!-- TESTO CON LINEA GIALLA RIPRISTINATA -->
+            <div class="md:sticky md:top-32 relative pl-8 md:pl-12">
+                
+                <!-- LA LINEA ANIMATA -->
+                <div class="story-border"></div>
+                <div class="story-fill" id="line1"></div>
+
                 <span class="text-yellow-500 font-bold tracking-widest text-[10px] uppercase mb-3 block">Capitolo 1</span>
                 <h2 class="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight">La Scuola della Forza.</h2>
                 <div class="space-y-6 text-zinc-400 text-base md:text-lg leading-relaxed font-light">
@@ -129,24 +154,26 @@
                 </div>
             </div>
 
+            <!-- VIDEO STACK -->
             <div class="space-y-8 w-full">
                 <!-- SQUAT -->
-                <div class="rounded-2xl overflow-hidden glass-panel w-full shadow-2xl reveal-box">
-                    <!-- Aggiunto playsinline e muted esplicito -->
-                    <video autoplay loop muted playsinline preload="metadata" class="w-full aspect-video object-cover lazy-video">
-                        <source src="asset/squat.mp4" type="video/mp4">
+                <!-- aspect-video mantiene la forma 16:9, il video dentro è absolute per riempire tutto -->
+                <div class="rounded-2xl overflow-hidden glass-panel w-full aspect-video shadow-2xl reveal-box">
+                    <video loop muted playsinline class="lazy-video video-fill">
+                        <source data-src="asset/squat.mp4" type="video/mp4">
                     </video>
-                    <div class="absolute bottom-4 left-4 bg-black/70 backdrop-blur px-3 py-1 rounded text-[10px] font-bold text-white uppercase tracking-wider border border-white/10">
+                    <!-- Label sopra il video -->
+                    <div class="absolute bottom-4 left-4 z-20 bg-black/70 backdrop-blur px-3 py-1 rounded text-[10px] font-bold text-white uppercase tracking-wider border border-white/10">
                         Squat
                     </div>
                 </div>
                 
                 <!-- STACCO -->
-                <div class="rounded-2xl overflow-hidden glass-panel w-full shadow-2xl md:translate-x-12 reveal-box">
-                    <video autoplay loop muted playsinline preload="metadata" class="w-full aspect-video object-cover lazy-video">
-                        <source src="asset/stacco.mp4" type="video/mp4">
+                <div class="rounded-2xl overflow-hidden glass-panel w-full aspect-video shadow-2xl md:translate-x-12 reveal-box">
+                    <video loop muted playsinline class="lazy-video video-fill">
+                        <source data-src="asset/stacco.mp4" type="video/mp4">
                     </video>
-                    <div class="absolute bottom-4 left-4 bg-black/70 backdrop-blur px-3 py-1 rounded text-[10px] font-bold text-white uppercase tracking-wider border border-white/10">
+                    <div class="absolute bottom-4 left-4 z-20 bg-black/70 backdrop-blur px-3 py-1 rounded text-[10px] font-bold text-white uppercase tracking-wider border border-white/10">
                         Stacco
                     </div>
                 </div>
@@ -155,14 +182,14 @@
         </div>
     </section>
 
-    <!-- CAPITOLO 2 -->
+    <!-- CAPITOLO 2: PREMIAZIONE -->
     <section class="py-24 px-4 relative">
-        <div class="max-w-6xl mx-auto relative rounded-3xl overflow-hidden shadow-[0_0_60px_rgba(234,179,8,0.05)] border border-white/10 reveal-box glass-panel">
-            <video autoplay loop muted playsinline preload="metadata" class="w-full aspect-video md:h-[75vh] object-cover lazy-video">
-                <source src="asset/premiazione.mp4" type="video/mp4">
+        <div class="max-w-6xl mx-auto relative rounded-3xl overflow-hidden shadow-[0_0_60px_rgba(234,179,8,0.05)] border border-white/10 reveal-box glass-panel aspect-video md:aspect-[21/9]">
+            <video loop muted playsinline class="lazy-video video-fill">
+                <source data-src="asset/premiazione.mp4" type="video/mp4">
             </video>
             
-            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-8 md:p-20">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-8 md:p-20 z-10">
                 <div class="reveal-up">
                     <h3 class="text-4xl md:text-8xl font-bold text-white mb-2 tracking-tighter">Vice-Campione.</h3>
                     <p class="text-yellow-400 text-xs md:text-lg tracking-[0.2em] uppercase font-bold">
@@ -173,33 +200,39 @@
         </div>
     </section>
 
-    <!-- CAPITOLO 3 -->
+    <!-- CAPITOLO 3: BODYBUILDING -->
     <section class="py-24 px-6 md:px-10 max-w-7xl mx-auto relative" id="chapter3">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
             
             <div class="grid grid-cols-2 gap-4 md:gap-8 order-2 md:order-1">
-                <!-- PANCA -->
+                <!-- PANCA (Verticale) -->
+                <!-- aspect-[9/16] fissa l'altezza, video-fill riempie tutto -->
                 <div class="rounded-2xl overflow-hidden glass-panel aspect-[9/16] relative md:mt-16 reveal-box">
-                    <video autoplay loop muted playsinline preload="metadata" class="w-full h-full object-cover lazy-video">
-                        <source src="asset/panca.mp4" type="video/mp4">
+                    <video loop muted playsinline class="lazy-video video-fill">
+                        <source data-src="asset/panca.mp4" type="video/mp4">
                     </video>
-                    <div class="absolute bottom-3 left-3 bg-black/70 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-white uppercase border border-white/10">
+                    <div class="absolute bottom-3 left-3 z-20 bg-black/70 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-white uppercase border border-white/10">
                         Setup Panca
                     </div>
                 </div>
                 
-                <!-- TRAZIONI -->
+                <!-- TRAZIONI (Verticale) -->
                 <div class="rounded-2xl overflow-hidden glass-panel aspect-[9/16] relative md:mb-16 reveal-box">
-                    <video autoplay loop muted playsinline preload="metadata" class="w-full h-full object-cover lazy-video">
-                        <source src="asset/trazione.mp4" type="video/mp4">
+                    <video loop muted playsinline class="lazy-video video-fill">
+                        <source data-src="asset/trazione.mp4" type="video/mp4">
                     </video>
-                    <div class="absolute bottom-3 left-3 bg-black/70 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-white uppercase border border-white/10">
+                    <div class="absolute bottom-3 left-3 z-20 bg-black/70 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-white uppercase border border-white/10">
                         Trazioni
                     </div>
                 </div>
             </div>
 
-            <div class="order-1 md:order-2 md:pr-12">
+            <!-- TESTO -->
+            <div class="order-1 md:order-2 relative pl-8 md:pl-12">
+                <!-- Linea anche qui, blu per cambiare tema -->
+                <div class="story-border" style="background: rgba(255,255,255,0.05);"></div>
+                <div class="story-fill" id="line2" style="background: #3b82f6;"></div>
+
                 <span class="text-blue-500 font-bold tracking-widest text-[10px] uppercase mb-3 block">Capitolo 2</span>
                 <h2 class="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight">L'Evoluzione Estetica.</h2>
                 <div class="space-y-6 text-zinc-400 text-base md:text-lg leading-relaxed font-light">
@@ -251,80 +284,82 @@
     </section>
 
     <script>
-        // SCRIPT "FORCE PLAY" PER MOBILE
+        // LAZY LOAD VIDEO (Anti-Blocco Mobile)
         document.addEventListener("DOMContentLoaded", function() {
-            // Seleziona tutti i video
-            var videos = document.querySelectorAll('video');
-            
-            // Per ogni video
-            videos.forEach(function(video) {
-                // Tenta il play immediato
-                var playPromise = video.play();
-                
-                if (playPromise !== undefined) {
-                    playPromise.then(_ => {
-                        // Autoplay partito
-                    })
-                    .catch(error => {
-                        // Autoplay bloccato: mutiamo e riproviamo
-                        console.log("Autoplay blocked, retrying muted");
-                        video.muted = true;
-                        video.play();
+            // Hero
+            const heroVideo = document.querySelector('.video-hero');
+            if(heroVideo) {
+                heroVideo.play().catch(() => { heroVideo.muted=true; heroVideo.play(); });
+            }
+
+            // Lazy Videos
+            var lazyVideos = [].slice.call(document.querySelectorAll("video.lazy-video"));
+            if ("IntersectionObserver" in window) {
+                var lazyVideoObserver = new IntersectionObserver(function(entries, observer) {
+                    entries.forEach(function(video) {
+                        if (video.isIntersecting) {
+                            for (var source in video.target.children) {
+                                var videoSource = video.target.children[source];
+                                if (typeof videoSource.tagName === "string" && videoSource.tagName === "SOURCE") {
+                                    videoSource.src = videoSource.dataset.src;
+                                }
+                            }
+                            video.target.load();
+                            var playPromise = video.target.play();
+                            if (playPromise !== undefined) {
+                                playPromise.catch(() => { video.target.muted = true; video.target.play(); });
+                            }
+                            lazyVideoObserver.unobserve(video.target);
+                        }
                     });
-                }
-            });
-
-            // Observer per far partire i video solo quando visibili (risparmio batteria)
-            let observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if(entry.isIntersecting) {
-                        entry.target.play();
-                    } else {
-                        entry.target.pause();
-                    }
                 });
-            }, { threshold: 0.1 });
-
-            videos.forEach(video => {
-                observer.observe(video);
-            });
+                lazyVideos.forEach(function(lazyVideo) { lazyVideoObserver.observe(lazyVideo); });
+            }
         });
 
-        // Animazioni GSAP
-        const lenis = new Lenis({
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            smooth: true,
-            touchMultiplier: 2
-        });
-        function raf(time) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
+        // ANIMAZIONI GSAP
+        const lenis = new Lenis({ duration: 1.2, smooth: true });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
 
         gsap.registerPlugin(ScrollTrigger);
-
+        
         const tl = gsap.timeline();
         tl.to("#loader-text", { opacity: 1, y: 0, duration: 1, ease: "power4.out" })
           .to("#loader-text", { y: -50, opacity: 0, delay: 0.5, duration: 0.5 })
           .to("#loader", { yPercent: -100, duration: 0.8, ease: "power4.inOut" })
           .to(".hero-anim", { opacity: 1, y: 0, stagger: 0.15, duration: 1 });
 
-        const revealElements = document.querySelectorAll('h2, .reveal-box, .glass-panel');
-        revealElements.forEach(el => {
-            gsap.from(el, {
-                scrollTrigger: {
-                    trigger: el,
-                    start: "top 85%"
-                },
-                y: 40,
-                opacity: 0,
-                duration: 1,
-                ease: "power3.out"
-            });
+        // ANIMAZIONE LINEA GIALLA (CAPITOLO 1)
+        gsap.to("#line1", {
+            scrollTrigger: {
+                trigger: "#chapter1",
+                start: "top center",
+                end: "bottom center",
+                scrub: true
+            },
+            height: "100%"
         });
 
+        // ANIMAZIONE LINEA BLU (CAPITOLO 2)
+        gsap.to("#line2", {
+            scrollTrigger: {
+                trigger: "#chapter3", // Assicurati che l'ID corrisponda alla sezione
+                start: "top center",
+                end: "bottom center",
+                scrub: true
+            },
+            height: "100%"
+        });
+
+        // Reveal standard
+        const revealElements = document.querySelectorAll('h2, .reveal-box');
+        revealElements.forEach(el => {
+            gsap.from(el, {
+                scrollTrigger: { trigger: el, start: "top 85%" },
+                y: 40, opacity: 0, duration: 1, ease: "power3.out"
+            });
+        });
     </script>
 </body>
 </html>
