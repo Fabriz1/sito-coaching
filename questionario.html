@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="it" class="bg-black text-white antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Candidatura | Fabrizio Gesualdo</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP (Animazioni) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <!-- jsPDF (Generazione PDF) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- EmailJS (Invio Mail) -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden; 
+            background-color: #050505;
+        }
+
+        /* Input personalizzati */
+        input[type="text"], input[type="number"], textarea {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            color: white;
+            font-size: 1.5rem;
+            width: 100%;
+            padding: 10px 0;
+            outline: none;
+            transition: border-color 0.3s;
+            border-radius: 0;
+        }
+        input:focus, textarea:focus {
+            border-bottom-color: #eab308;
+        }
+
+        /* Radio Buttons Cards */
+        .radio-card {
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .radio-card:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.3);
+        }
+        .radio-card.selected {
+            background: #eab308;
+            border-color: #eab308;
+            color: black;
+        }
+        .radio-card.selected .desc {
+            color: rgba(0,0,0,0.7);
+        }
+
+        /* Slider personalizzato */
+        input[type=range] {
+            -webkit-appearance: none; 
+            width: 100%; 
+            background: transparent; 
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #eab308;
+            cursor: pointer;
+            margin-top: -10px; 
+            box-shadow: 0 0 10px rgba(234,179,8,0.5);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex flex-col relative">
+
+    <!-- HEADER -->
+    <header class="absolute top-0 w-full p-6 md:p-10 flex justify-between items-center z-50">
+        <a href="index.html" class="text-xs md:text-sm font-bold tracking-widest uppercase text-zinc-500 hover:text-white transition-colors">
+            ← Home
+        </a>
+        <div class="text-xs md:text-sm font-bold tracking-widest uppercase text-white">
+            Candidatura Atleta
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow flex flex-col justify-center items-center px-6 md:px-0 max-w-2xl mx-auto w-full relative z-10">
+        
+        <div id="question-container" class="w-full">
+            <!-- Domande iniettate via JS -->
+        </div>
+
+        <div id="error-msg" class="absolute bottom-24 text-red-500 text-sm opacity-0 transform translate-y-4">
+            Per favore, completa il campo per procedere.
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="absolute bottom-0 w-full p-6 md:p-10 z-50">
+        <div class="w-full h-1 bg-zinc-800 mb-6 rounded-full overflow-hidden">
+            <div id="progress-bar" class="h-full bg-yellow-500 w-0 transition-all duration-500 ease-out"></div>
+        </div>
+
+        <div class="flex justify-between items-center">
+            <div id="step-counter" class="text-zinc-500 text-xs uppercase tracking-widest">
+                01 / 15
+            </div>
+            <button id="next-btn" onclick="nextQuestion()" class="bg-white text-black px-8 py-3 rounded-full font-bold text-sm hover:bg-yellow-400 transition-colors flex items-center gap-2">
+                Avanti →
+            </button>
+        </div>
+    </footer>
+
+    <!-- SCHERMATA FINALE -->
+    <div id="final-screen" class="fixed inset-0 bg-black z-[60] flex flex-col justify-center items-center p-6 text-center hidden">
+        <div id="loading-state" class="flex flex-col items-center">
+            <h2 class="text-3xl md:text-5xl font-bold text-white mb-4">Elaborazione Profilo...</h2>
+            <p class="text-zinc-400 mb-10 max-w-md">Sto generando il tuo Report e inviando la candidatura.</p>
+            <div class="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+
+        <div id="success-state" class="hidden flex-col items-center animate-fade-in max-w-lg">
+            <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(34,197,94,0.4)]">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold text-white mb-4">Candidatura Inviata.</h2>
+            <p class="text-zinc-400 mb-8 leading-relaxed">
+                Ho ricevuto il tuo dossier tecnico. Analizzerò i tuoi dati e ti contatterò a breve per fissare una consulenza se il tuo profilo è idoneo.
+            </p>
+            
+            <div class="bg-zinc-900 border border-white/10 p-6 rounded-2xl w-full mb-6 text-left">
+                <p class="text-white text-sm font-bold mb-1">📩 Copia per te</p>
+                <p class="text-zinc-500 text-xs">Il PDF del tuo profilo è stato scaricato anche sul tuo dispositivo. Conservalo.</p>
+            </div>
+
+            <a href="index.html" class="text-white border border-white/20 px-8 py-3 rounded-full hover:bg-white hover:text-black transition-colors font-bold text-sm uppercase tracking-widest">
+                Torna alla Home
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURAZIONE EMAILJS (INSERISCI I TUOI DATI QUI) ---
+        const EMAILJS_PUBLIC_KEY = "T8dj9XWNv-5ch1oJr"; // Es: "user_xxxxxx"
+        const EMAILJS_SERVICE_ID = "service_ti1ildb"; // Es: "service_gmail"
+        const EMAILJS_TEMPLATE_ID = "template_06smi7q"; // Es: "template_contact"
+
+        // Inizializza EmailJS
+        (function() {
+            emailjs.init(EMAILJS_PUBLIC_KEY);
+        })();
+
+        // --- DOMANDE ---
+        const questions = [
+            { id: 'nome', type: 'text', label: 'Come ti chiami?', placeholder: 'Nome e Cognome' },
+            { id: 'eta', type: 'number', label: 'Quanti anni hai?', placeholder: 'Età' },
+            { id: 'altezza', type: 'number', label: 'Quanto sei alto? (cm)', placeholder: 'Es. 175' },
+            
+            { 
+                id: 'esperienza', 
+                type: 'radio', 
+                label: 'Da quanto tempo ti alleni?', 
+                options: [
+                    {val: 'Mai', label: 'Mai allenato'},
+                    {val: '< 1 Anno', label: 'Meno di 1 anno'},
+                    {val: '1-3 Anni', label: 'Tra 1 e 3 anni'},
+                    {val: '> 3 Anni', label: 'Più di 3 anni'}
+                ]
+            },
+
+            { 
+                id: 'obiettivo', 
+                type: 'radio', 
+                label: 'Qual è il tuo obiettivo principale?', 
+                options: [
+                    {val: 'Ipertrofia', label: 'Ipertrofia', desc: 'Costruzione muscolare pura'},
+                    {val: 'Forza', label: 'Forza', desc: 'Aumento carichi e performance'},
+                    {val: 'Ricomposizione', label: 'Ricomposizione', desc: 'Migliorare estetica e qualità'},
+                    {val: 'Dimagrimento', label: 'Dimagrimento', desc: 'Perdita massa grassa'}
+                ]
+            },
+
+            { 
+                id: 'agonismo', 
+                type: 'radio', 
+                label: 'Hai fini agonistici o personali?', 
+                options: [
+                    {val: 'Personale', label: 'Miglioramento Personale', desc: 'Voglio solo vedermi/sentirmi meglio'},
+                    {val: 'Agonismo Futuro', label: 'Vorrei gareggiare', desc: 'Sogno il palco o la pedana'},
+                    {val: 'Agonista', label: 'Sono già agonista', desc: 'Powerlifting o Bodybuilding'}
+                ]
+            },
+
+            { 
+                id: 'infortuni', 
+                type: 'radio-text', 
+                label: 'Hai infortuni pregressi o attuali?',
+                options: [ {val: 'No', label: 'No, sono integro'}, {val: 'Sì', label: 'Sì (Specifica sotto)'} ],
+                subPlaceholder: 'Descrivi brevemente il problema...'
+            },
+
+            { 
+                id: 'frequenza', 
+                type: 'radio', 
+                label: 'Quanti giorni a settimana puoi allenarti?',
+                options: ['3', '4', '5', '6']
+            },
+
+            { 
+                id: 'tempo_seduta', 
+                type: 'radio', 
+                label: 'Quanto tempo hai per singola seduta?', 
+                options: [
+                    {val: '45-60min', label: 'Poco (45-60 min)'},
+                    {val: '75-90min', label: 'Medio (75-90 min)'},
+                    {val: 'Illimitato', label: 'Quanto serve'}
+                ]
+            },
+
+            { 
+                id: 'aspettativa_fisico', 
+                type: 'text', 
+                label: 'Secondo te, quanto tempo ci vuole per costruire un "bel fisico"?', 
+                placeholder: 'Es. 6 mesi, 2 anni, 5 anni...' 
+            },
+
+            { 
+                id: 'flessibilita', 
+                type: 'range', 
+                label: 'Come valuti la tua mobilità/flessibilità?', 
+                min: 1, max: 10,
+                labels: {1: 'Palo di legno', 5: 'Nella media', 10: 'Contorsionista'} 
+            },
+
+            { 
+                id: 'nutrizione', 
+                type: 'radio', 
+                label: 'Come ti rapporti con l\'alimentazione?', 
+                options: [
+                    {val: 'Rigido', label: 'Seguo già i macro/dieta'},
+                    {val: 'Intuitivo', label: 'Mangio pulito ma a occhio'},
+                    {val: 'Caotico', label: 'Non ci bado molto'},
+                    {val: 'Curioso', label: 'Vorrei imparare a gestirla'}
+                ]
+            },
+
+            { id: 'perche_ora', type: 'text', label: 'Perché vuoi iniziare un percorso proprio ora?', placeholder: 'Cosa è scattato in te?' },
+
+            { id: 'social', type: 'radio', label: 'Guardi video a tema allenamento sui social?', options: ['Sì', 'No'] },
+            
+            { id: 'esercizio_curiosita', type: 'text', label: 'C\'è un esercizio che vorresti imparare a fare?', placeholder: 'Es. Stacco da terra, Muscle up...' },
+
+            { 
+                id: 'motivazione', 
+                type: 'range', 
+                label: 'Quanto sei motivato da 1 a 10?', 
+                min: 1, max: 10,
+                labels: {1: 'Curiosità', 5: 'Interesse', 10: 'Ossessione'}
+            }
+        ];
+
+        let currentStep = 0;
+        const answers = {};
+
+        // --- UI UTILS ---
+        const container = document.getElementById('question-container');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const stepCounter = document.getElementById('step-counter');
+        const errorMsg = document.getElementById('error-msg');
+
+        function renderQuestion(index) {
+            const q = questions[index];
+            let html = `<h2 class="text-3xl md:text-5xl font-bold mb-8 md:mb-12 leading-tight">${q.label}</h2><div class="w-full">`;
+            
+            if (q.type === 'text' || q.type === 'number') {
+                html += `<input type="${q.type}" id="input-${q.id}" placeholder="${q.placeholder}" autocomplete="off" onkeypress="handleEnter(event)">`;
+            } 
+            else if (q.type === 'radio') {
+                html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
+                q.options.forEach(opt => {
+                    const val = typeof opt === 'string' ? opt : opt.val;
+                    const label = typeof opt === 'string' ? opt : opt.label;
+                    const desc = opt.desc ? `<div class="text-xs text-zinc-500 desc mt-1">${opt.desc}</div>` : '';
+                    html += `<div class="radio-card" onclick="selectRadio(this, '${val}')"><div class="font-bold text-lg">${label}</div>${desc}</div>`;
+                });
+                html += `</div><input type="hidden" id="input-${q.id}">`;
+            }
+            else if (q.type === 'radio-text') {
+                 html += `<div class="flex gap-4 mb-6">`;
+                 q.options.forEach(opt => {
+                    html += `<div class="radio-card flex-1 text-center" onclick="selectRadioText(this, '${opt.val}', '${q.id}')"><div class="font-bold">${opt.label}</div></div>`;
+                 });
+                 html += `</div><input type="text" id="subinput-${q.id}" placeholder="${q.subPlaceholder}" class="hidden opacity-0 transition-all duration-300"><input type="hidden" id="input-${q.id}">`;
+            }
+            else if (q.type === 'range') {
+                html += `<div class="relative py-8"><input type="range" id="input-${q.id}" min="${q.min}" max="${q.max}" value="${Math.ceil(q.max/2)}" oninput="updateRangeLabel(this.value)"><div class="flex justify-between mt-4 text-zinc-500 text-sm font-mono"><span>${q.labels[q.min]}</span><span id="range-val" class="text-white font-bold text-xl">${Math.ceil(q.max/2)}</span><span>${q.labels[q.max]}</span></div></div>`;
+            }
+
+            html += `</div>`;
+            container.innerHTML = html;
+
+            const textInput = document.getElementById(`input-${q.id}`);
+            if(textInput && (q.type === 'text' || q.type === 'number')) setTimeout(() => textInput.focus(), 100);
+
+            gsap.fromTo(container, {opacity: 0, y: 50}, {opacity: 1, y: 0, duration: 0.5, ease: 'power3.out'});
+
+            const progress = ((index) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            stepCounter.innerText = `${index + 1} / ${questions.length}`;
+
+            if (index === questions.length - 1) {
+                nextBtn.innerText = "Concludi e Invia";
+                nextBtn.classList.add('bg-yellow-500', 'text-black');
+            } else {
+                nextBtn.innerText = "Avanti →";
+                nextBtn.classList.remove('bg-yellow-500', 'text-black');
+                nextBtn.classList.add('bg-white', 'text-black');
+            }
+        }
+
+        function handleEnter(e) { if (e.key === 'Enter') nextQuestion(); }
+        
+        function selectRadio(el, val) {
+            document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById(`input-${questions[currentStep].id}`).value = val;
+            setTimeout(nextQuestion, 300);
+        }
+
+        function selectRadioText(el, val, id) {
+            document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById(`input-${id}`).value = val;
+            const subInput = document.getElementById(`subinput-${id}`);
+            if (val === 'Sì') {
+                subInput.classList.remove('hidden');
+                setTimeout(() => {subInput.classList.remove('opacity-0'); subInput.focus();}, 50);
+            } else {
+                subInput.classList.add('opacity-0');
+                setTimeout(() => subInput.classList.add('hidden'), 300);
+            }
+        }
+
+        function updateRangeLabel(val) { document.getElementById('range-val').innerText = val; }
+
+        function nextQuestion() {
+            const q = questions[currentStep];
+            let val = '';
+            if (q.type === 'radio' || q.type === 'range') {
+                val = document.getElementById(`input-${q.id}`).value;
+            } else if (q.type === 'radio-text') {
+                const mainVal = document.getElementById(`input-${q.id}`).value;
+                if (!mainVal) { showError(); return; }
+                const subVal = document.getElementById(`subinput-${q.id}`).value;
+                val = mainVal === 'Sì' ? `Sì: ${subVal}` : 'No';
+                if (mainVal === 'Sì' && subVal.length < 2) { showError(); return; }
+            } else {
+                val = document.getElementById(`input-${q.id}`).value;
+            }
+
+            if (!val || val.trim() === '') { showError(); return; }
+
+            answers[q.id] = val;
+            answers[q.label] = val;
+
+            gsap.to(container, {opacity: 0, y: -50, duration: 0.3, ease: 'power3.in', onComplete: () => {
+                currentStep++;
+                if (currentStep < questions.length) renderQuestion(currentStep);
+                else finishForm();
+            }});
+        }
+
+        function showError() {
+            gsap.to(errorMsg, {opacity: 1, y: 0, duration: 0.3});
+            setTimeout(() => gsap.to(errorMsg, {opacity: 0, y: 16, duration: 0.3}), 3000);
+        }
+
+        // --- CORE: GENERAZIONE PDF + INVIO MAIL ---
+        async function finishForm() {
+            const finalScreen = document.getElementById('final-screen');
+            const loading = document.getElementById('loading-state');
+            const success = document.getElementById('success-state');
+
+            finalScreen.classList.remove('hidden');
+            
+            // 1. Genera PDF
+            const doc = new jspdf.jsPDF();
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const black = "#000000"; const gray = "#666666";
+            
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(22);
+            doc.text("REPORT CANDIDATURA ATLETA", 20, 20);
+            doc.setFontSize(10); doc.setTextColor(gray);
+            doc.text("FABRIZIO GESUALDO | COACHING", 20, 26);
+            const today = new Date().toLocaleDateString('it-IT');
+            doc.text(`Data: ${today}`, pageWidth - 20, 26, {align: 'right'});
+            doc.setDrawColor(0); doc.setLineWidth(0.5); doc.line(20, 32, pageWidth - 20, 32);
+
+            // Box Anagrafica
+            doc.setFillColor(245, 245, 245); doc.rect(20, 40, pageWidth - 40, 35, 'F');
+            doc.setTextColor(black); doc.setFontSize(14); doc.text(answers['nome'].toUpperCase(), 25, 52);
+            doc.setFontSize(10); doc.setTextColor(gray);
+            doc.text("Età / Altezza", 25, 60); doc.text("Esperienza", 100, 60); doc.text("Agonismo", 150, 60);
+            doc.setTextColor(black); doc.setFontSize(12);
+            doc.text(`${answers['eta']} anni | ${answers['altezza']} cm`, 25, 66);
+            doc.text(answers['esperienza'], 100, 66); doc.text(answers['agonismo'], 150, 66);
+
+            let yPos = 90;
+            function printRow(label, value) {
+                if (yPos > 270) { doc.addPage(); yPos = 20; }
+                doc.setFontSize(10); doc.setTextColor(gray); doc.text(label.toUpperCase(), 20, yPos);
+                doc.setFontSize(12); doc.setTextColor(black);
+                const splitText = doc.splitTextToSize(value, 120);
+                doc.text(splitText, 70, yPos);
+                yPos += (splitText.length * 6) + 8;
+            }
+
+            // Sezioni
+            doc.setFontSize(12); doc.setTextColor(black); doc.setFont("helvetica", "bold");
+            doc.text("PROFILO TECNICO", 20, yPos); doc.setDrawColor(234, 179, 8); doc.line(20, yPos+2, 60, yPos+2); yPos += 15;
+            doc.setFont("helvetica", "normal");
+            printRow("Obiettivo", answers['obiettivo']);
+            printRow("Infortuni", answers['infortuni']);
+            printRow("Frequenza", `${answers['frequenza']} giorni/settimana`);
+            printRow("Disponibilità", answers['tempo_seduta']);
+            printRow("Curiosità Esercizio", answers['esercizio_curiosita']);
+
+            yPos += 10;
+            if (yPos > 250) { doc.addPage(); yPos = 20; }
+            doc.setFontSize(12); doc.setFont("helvetica", "bold");
+            doc.text("MINDSET", 20, yPos); doc.setDrawColor(234, 179, 8); doc.line(20, yPos+2, 90, yPos+2); yPos += 15;
+            doc.setFont("helvetica", "normal");
+            printRow("Aspettativa Tempo", answers['aspettativa_fisico']);
+            printRow("Mobilità (1-10)", `${answers['flessibilita']}/10`);
+            printRow("Approccio Nutrizione", answers['nutrizione']);
+            printRow("Perché Ora?", answers['perche_ora']);
+            printRow("Social Influence", answers['social'] === 'Sì' ? 'Influenzato dai Social' : 'Non segue trend social');
+            printRow("Motivazione (1-10)", `${answers['motivazione']}/10`);
+
+            // Box Note Coach
+            if (yPos > 220) { doc.addPage(); yPos = 20; } else { yPos += 10; }
+            doc.setDrawColor(0); doc.setLineWidth(0.2); doc.rect(20, yPos, pageWidth - 40, 50);
+            doc.setFillColor(230, 230, 230); doc.rect(20, yPos, pageWidth - 40, 8, 'F');
+            doc.setFontSize(8); doc.setTextColor(black); doc.text("SPAZIO RISERVATO AL COACH (NOTE / ANALISI)", 25, yPos + 6);
+
+            // 2. Prepara Dati per EmailJS
+            // Convertiamo il PDF in un Data URI (base64)
+            const pdfDataUri = doc.output('datauristring');
+            
+            // Parametri da inviare al template di EmailJS
+            // NOTA TECNICA: Inviare allegati col piano Free a volte è limitato.
+            // Per sicurezza, inviamo TUTTI i dati anche come testo nel corpo della mail.
+            const templateParams = {
+                to_name: "Fabrizio",
+                from_name: answers['nome'],
+                eta: answers['eta'],
+                obiettivo: answers['obiettivo'],
+                esperienza: answers['esperienza'],
+                agonismo: answers['agonismo'],
+                infortuni: answers['infortuni'],
+                motivazione: answers['motivazione'],
+                perche_ora: answers['perche_ora'],
+                // Questo parametro 'content' serve se usi l'estensione allegati di EmailJS,
+                // altrimenti verrà ignorato ma i dati sopra arriveranno comunque.
+                content: pdfDataUri 
+            };
+
+            try {
+                // 3. Invio Mail
+                await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+                
+                // 4. Scarica comunque il PDF all'utente (Backup)
+                doc.save(`Candidatura_${answers['nome'].replace(/\s+/g, '')}.pdf`);
+
+                // 5. Mostra Successo
+                loading.classList.add('hidden');
+                success.classList.remove('hidden');
+                success.classList.add('flex');
+
+            } catch (error) {
+                console.error("Errore invio mail:", error);
+                alert("C'è stato un problema nell'invio automatico. Il PDF verrà comunque scaricato. Invialo manualmente su WhatsApp.");
+                doc.save(`Candidatura_${answers['nome'].replace(/\s+/g, '')}.pdf`);
+                loading.classList.add('hidden');
+                // Fallback a WhatsApp se mail fallisce
+                window.location.href = "https://wa.me/393515662347";
+            }
+        }
+
+        renderQuestion(0);
+    </script>
+</body>
+</html>

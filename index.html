@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="it" class="bg-black text-white antialiased">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Fabrizio Gesualdo | Coach</title>
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- GSAP & Lenis -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -19,9 +20,15 @@
             overflow-x: hidden;
             background-color: #050505;
         }
-        
-        ::-webkit-scrollbar { display: none; }
-        html { -ms-overflow-style: none; scrollbar-width: none; }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        html {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
 
         .text-gradient {
             background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
@@ -36,25 +43,26 @@
             top: 0;
             bottom: 0;
             width: 2px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
         }
+
         .story-fill {
             position: absolute;
             left: 0;
             top: 0;
             width: 2px;
-            background: #eab308; /* Giallo */
-            height: 0%; /* Parte da 0 */
+            background: #eab308;
+            /* Giallo */
+            height: 0%;
         }
 
         .glass-panel {
-            background: #18181b; 
+            background: #18181b;
             border: 1px solid rgba(255, 255, 255, 0.08);
             position: relative;
-            overflow: hidden; /* Fondamentale per non far uscire il video */
+            overflow: hidden;
         }
 
-        /* FIX PER LE BANDE NERE: Il video riempie tutto in assoluto */
         .video-fill {
             position: absolute;
             top: 0;
@@ -73,126 +81,211 @@
             justify-content: center;
             align-items: center;
         }
+
+        /* SLIDER PRIMA/DOPO */
+        .compare-container {
+            position: relative;
+            overflow: hidden;
+            cursor: col-resize;
+        }
+
+        .compare-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .compare-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            clip-path: inset(0 50% 0 0);
+            transition: clip-path 0.1s ease-out;
+        }
+
+        .compare-handle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background: #eab308;
+            z-index: 10;
+            pointer-events: none;
+            filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+        }
+
+        .compare-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: #eab308;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-size: 14px;
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.4);
+        }
     </style>
 </head>
+
 <body class="bg-black selection:bg-yellow-500 selection:text-black">
 
     <!-- LOADER -->
     <div id="loader">
-        <h1 class="text-3xl md:text-6xl font-bold tracking-tighter text-white translate-y-10 opacity-0" id="loader-text">
+        <h1 class="text-3xl md:text-6xl font-bold tracking-tighter text-white translate-y-10 opacity-0"
+            id="loader-text">
             FABRIZIO GESUALDO
         </h1>
     </div>
 
     <!-- NAVIGAZIONE -->
-    <nav class="fixed top-0 w-full z-50 px-6 py-6 flex justify-between items-center mix-blend-difference pointer-events-none">
-        <div class="text-xs md:text-sm font-bold tracking-widest uppercase text-white pointer-events-auto">FG // COACH</div>
-        <a href="#contact" class="pointer-events-auto text-[10px] md:text-xs border border-white/30 rounded-full px-4 py-2 text-white bg-black/20 backdrop-blur-md hover:bg-white hover:text-black transition-colors uppercase tracking-wider">Inizia Ora</a>
+    <nav
+        class="fixed top-0 w-full z-50 px-6 py-6 flex justify-between items-center mix-blend-difference pointer-events-none">
+        <div class="text-xs md:text-sm font-bold tracking-widest uppercase text-white pointer-events-auto">FG // COACH
+        </div>
+        <!-- MODIFICATO: href punta a questionario.html -->
+        <a href="questionario.html"
+            class="pointer-events-auto text-[10px] md:text-xs border border-white/30 rounded-full px-4 py-2 text-white bg-black/20 backdrop-blur-md hover:bg-white hover:text-black transition-colors uppercase tracking-wider">
+            Candidati
+        </a>
     </nav>
 
     <!-- HERO SECTION -->
     <section class="h-screen w-full relative flex flex-col justify-center items-center px-4 overflow-hidden">
-        
+
         <div class="absolute inset-0 z-0 bg-zinc-900">
-             <video autoplay loop muted playsinline preload="auto" class="w-full h-full object-cover blur-[50px] opacity-40 scale-105 video-hero">
+            <video autoplay loop muted playsinline preload="auto"
+                class="w-full h-full object-cover blur-[50px] opacity-40 scale-105 video-hero">
                 <source src="asset/pancagara.mp4" type="video/mp4">
             </video>
             <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black"></div>
         </div>
-        
-        <div class="z-10 text-center space-y-5 max-w-3xl">
+
+        <div class="z-10 text-center space-y-6 max-w-4xl">
             <p class="text-zinc-400 text-[10px] md:text-sm uppercase tracking-[0.2em] hero-anim opacity-0">
-                Performance & Estetica
-            </p>
-            
-            <h1 class="text-5xl md:text-8xl font-bold tracking-tighter text-gradient hero-anim opacity-0 leading-none pb-2">
-                MY JOURNEY.
-            </h1>
-            
-            <p class="text-zinc-300 text-sm md:text-lg max-w-xs md:max-w-lg mx-auto hero-anim opacity-0 leading-relaxed font-light">
-                Il rigore del Powerlifting.<br>Il dettaglio del Bodybuilding.
+                Coaching Online
             </p>
 
-            <!-- BADGE SOBRIO -->
+            <h1
+                class="text-4xl md:text-8xl font-bold tracking-tighter text-gradient hero-anim opacity-0 leading-none pb-2">
+                PERFORMANCE & ESTETICA.
+            </h1>
+
+            <p
+                class="text-zinc-300 text-sm md:text-lg max-w-xs md:max-w-2xl mx-auto hero-anim opacity-0 leading-relaxed font-light">
+                Programmazione della forza. Ottimizzazione della composizione corporea.<br class="hidden md:block">
+                Approccio tecnico basato su dati e biomeccanica.
+            </p>
+
             <div class="hero-anim opacity-0 pt-8 flex flex-col items-center gap-3">
-                <div class="px-6 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md hover:bg-white/10 transition-colors cursor-default">
-                    <span class="text-zinc-200 text-sm md:text-base font-light tracking-wide">
-                        L'Eccellenza resa Accessibile.
-                    </span>
-                </div>
-                <span class="text-yellow-600/80 text-[9px] md:text-[10px] uppercase tracking-widest font-medium">
-                    Tariffa Portfolio Attiva
-                </span>
+                <!-- MODIFICATO: href punta a questionario.html -->
+                <a href="questionario.html"
+                    class="px-8 py-3 rounded-full bg-white text-black font-semibold hover:bg-zinc-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                    Inizia il Percorso
+                </a>
             </div>
         </div>
-        
+
         <div class="absolute bottom-10 animate-pulse text-zinc-500 text-[10px] uppercase tracking-widest">
-            Scorri la storia
+            Scorri
         </div>
     </section>
 
-    <!-- CAPITOLO 1: POWERLIFTING -->
+    <!-- CAPITOLO 1: POWERLIFTING & SCHEMI MOTORI -->
     <section class="py-24 px-6 md:px-10 max-w-7xl mx-auto" id="chapter1">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-start">
-            
-            <!-- TESTO CON LINEA GIALLA RIPRISTINATA -->
-            <div class="md:sticky md:top-32 relative pl-8 md:pl-12">
-                
-                <!-- LA LINEA ANIMATA -->
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-12 items-start">
+
+            <!-- TESTO (occupa 2 colonne su 5) -->
+            <div class="md:col-span-2 md:sticky md:top-32 relative pl-8 md:pl-12">
                 <div class="story-border"></div>
                 <div class="story-fill" id="line1"></div>
 
-                <span class="text-yellow-500 font-bold tracking-widest text-[10px] uppercase mb-3 block">Capitolo 1</span>
-                <h2 class="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight">La Scuola della Forza.</h2>
+                <span class="text-yellow-500 font-bold tracking-widest text-[10px] uppercase mb-3 block">Metodologia
+                    01</span>
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-8 leading-tight">Forza & Schemi Motori.</h2>
                 <div class="space-y-6 text-zinc-400 text-base md:text-lg leading-relaxed font-light">
                     <p>
-                        Ho iniziato il mio percorso nel <strong>Powerlifting</strong>. Non era solo sollevare pesi: era rigore, dieta ferrea e ossessione per il dettaglio.
+                        Il <strong>Powerlifting</strong> non è il fine, ma il mezzo. Squat, Panca e Stacco non sono
+                        semplici esercizi, ma <strong>schemi motori fondamentali</strong>.
                     </p>
                     <p>
-                        Squat e Stacco forgiano la mente. Qui ho imparato che la <strong>tecnica perfetta</strong> è l'unica assicurazione contro gli infortuni.
+                        Apprendere la tecnica corretta su queste alzate garantisce un <strong>transfer</strong> diretto
+                        su tutti gli esercizi complementari.
+                    </p>
+                    <p class="text-white font-medium">
+                        La vera forza è il pre-requisito dell'ipertrofia: senza la capacità di generare alta tensione
+                        meccanica, la crescita muscolare sarà sempre limitata.
                     </p>
                 </div>
             </div>
 
-            <!-- VIDEO STACK -->
-            <div class="space-y-8 w-full">
+            <!-- VIDEO GRID (occupa 3 colonne su 5) - ORA SONO 3 VIDEO -->
+            <div class="md:col-span-3 grid grid-cols-1 gap-6">
+
                 <!-- SQUAT -->
-                <!-- aspect-video mantiene la forma 16:9, il video dentro è absolute per riempire tutto -->
                 <div class="rounded-2xl overflow-hidden glass-panel w-full aspect-video shadow-2xl reveal-box">
                     <video loop muted playsinline class="lazy-video video-fill">
                         <source data-src="asset/squat.mp4" type="video/mp4">
                     </video>
-                    <!-- Label sopra il video -->
-                    <div class="absolute bottom-4 left-4 z-20 bg-black/70 backdrop-blur px-3 py-1 rounded text-[10px] font-bold text-white uppercase tracking-wider border border-white/10">
+                    <div
+                        class="absolute bottom-4 left-4 z-20 bg-black/70 backdrop-blur px-3 py-1 rounded text-[10px] font-bold text-white uppercase tracking-wider border border-white/10">
                         Squat
                     </div>
                 </div>
-                
+
+                <!-- PANCA (Spostata Qui) -->
+                <div class="rounded-2xl overflow-hidden glass-panel w-full aspect-video shadow-2xl reveal-box">
+                    <video loop muted playsinline class="lazy-video video-fill">
+                        <source data-src="asset/panca.mp4" type="video/mp4">
+                    </video>
+                    <div
+                        class="absolute bottom-4 left-4 z-20 bg-black/70 backdrop-blur px-3 py-1 rounded text-[10px] font-bold text-white uppercase tracking-wider border border-white/10">
+                        Panca Piana
+                    </div>
+                </div>
+
                 <!-- STACCO -->
-                <div class="rounded-2xl overflow-hidden glass-panel w-full aspect-video shadow-2xl md:translate-x-12 reveal-box">
+                <div class="rounded-2xl overflow-hidden glass-panel w-full aspect-video shadow-2xl reveal-box">
                     <video loop muted playsinline class="lazy-video video-fill">
                         <source data-src="asset/stacco.mp4" type="video/mp4">
                     </video>
-                    <div class="absolute bottom-4 left-4 z-20 bg-black/70 backdrop-blur px-3 py-1 rounded text-[10px] font-bold text-white uppercase tracking-wider border border-white/10">
+                    <div
+                        class="absolute bottom-4 left-4 z-20 bg-black/70 backdrop-blur px-3 py-1 rounded text-[10px] font-bold text-white uppercase tracking-wider border border-white/10">
                         Stacco
                     </div>
                 </div>
+
             </div>
 
         </div>
     </section>
 
-    <!-- CAPITOLO 2: PREMIAZIONE -->
+    <!-- CAPITOLO 2: PREMIAZIONE (Background Agonistico) -->
     <section class="py-24 px-4 relative">
-        <div class="max-w-6xl mx-auto relative rounded-3xl overflow-hidden shadow-[0_0_60px_rgba(234,179,8,0.05)] border border-white/10 reveal-box glass-panel aspect-video md:aspect-[21/9]">
+        <div
+            class="max-w-6xl mx-auto relative rounded-3xl overflow-hidden shadow-[0_0_60px_rgba(234,179,8,0.05)] border border-white/10 reveal-box glass-panel aspect-video md:aspect-[21/9]">
             <video loop muted playsinline class="lazy-video video-fill">
                 <source data-src="asset/premiazione.mp4" type="video/mp4">
             </video>
-            
-            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-8 md:p-20 z-10">
+
+            <div
+                class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-8 md:p-20 z-10">
                 <div class="reveal-up">
-                    <h3 class="text-4xl md:text-8xl font-bold text-white mb-2 tracking-tighter">Vice-Campione.</h3>
-                    <p class="text-yellow-400 text-xs md:text-lg tracking-[0.2em] uppercase font-bold">
+                    <h3 class="text-3xl md:text-6xl font-bold text-white mb-2 tracking-tighter">Competenza sul Campo.
+                    </h3>
+                    <p class="text-yellow-400 text-xs md:text-sm tracking-[0.2em] uppercase font-bold">
                         Campionato Nazionale • 2° Classificato
                     </p>
                 </div>
@@ -203,100 +296,248 @@
     <!-- CAPITOLO 3: BODYBUILDING -->
     <section class="py-24 px-6 md:px-10 max-w-7xl mx-auto relative" id="chapter3">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
-            
-            <div class="grid grid-cols-2 gap-4 md:gap-8 order-2 md:order-1">
-                <!-- PANCA (Verticale) -->
-                <!-- aspect-[9/16] fissa l'altezza, video-fill riempie tutto -->
-                <div class="rounded-2xl overflow-hidden glass-panel aspect-[9/16] relative md:mt-16 reveal-box">
-                    <video loop muted playsinline class="lazy-video video-fill">
-                        <source data-src="asset/panca.mp4" type="video/mp4">
-                    </video>
-                    <div class="absolute bottom-3 left-3 z-20 bg-black/70 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-white uppercase border border-white/10">
-                        Setup Panca
-                    </div>
-                </div>
-                
-                <!-- TRAZIONI (Verticale) -->
-                <div class="rounded-2xl overflow-hidden glass-panel aspect-[9/16] relative md:mb-16 reveal-box">
+
+            <!-- VIDEO (Solo Trazioni ora, più grande) -->
+            <div class="order-2 md:order-1">
+                <div
+                    class="rounded-2xl overflow-hidden glass-panel aspect-[9/16] relative md:w-2/3 mx-auto reveal-box shadow-2xl">
                     <video loop muted playsinline class="lazy-video video-fill">
                         <source data-src="asset/trazione.mp4" type="video/mp4">
                     </video>
-                    <div class="absolute bottom-3 left-3 z-20 bg-black/70 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-white uppercase border border-white/10">
-                        Trazioni
+                    <div
+                        class="absolute bottom-6 left-6 z-20 bg-black/70 backdrop-blur px-3 py-1 rounded text-[10px] font-bold text-white uppercase border border-white/10">
+                        Esecuzione & Controllo
                     </div>
                 </div>
             </div>
 
             <!-- TESTO -->
             <div class="order-1 md:order-2 relative pl-8 md:pl-12">
-                <!-- Linea anche qui, blu per cambiare tema -->
                 <div class="story-border" style="background: rgba(255,255,255,0.05);"></div>
                 <div class="story-fill" id="line2" style="background: #3b82f6;"></div>
 
-                <span class="text-blue-500 font-bold tracking-widest text-[10px] uppercase mb-3 block">Capitolo 2</span>
-                <h2 class="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight">L'Evoluzione Estetica.</h2>
+                <span class="text-blue-500 font-bold tracking-widest text-[10px] uppercase mb-3 block">Metodologia
+                    02</span>
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-8 leading-tight">Ipertrofia & Bodybuilding.</h2>
                 <div class="space-y-6 text-zinc-400 text-base md:text-lg leading-relaxed font-light">
                     <p>
-                        Ho deciso di evolvere verso il Bodybuilding. Ho studiato a fondo la <strong>biomeccanica dei muscoli secondari</strong> e l'importanza cruciale del <strong>Carico Interno</strong>.
+                        L'estetica è la conseguenza di parametri misurabili: <strong>volume, intensità e
+                            densità</strong>. Non ci basiamo su sensazioni, ma sulla progressione del carico interno.
                     </p>
                     <p>
-                        Non sposto solo pesi da A a B. Insegno a <em>sentire</em> il muscolo e ad arrivare a cedimento in totale sicurezza.
+                        Una volta costruita la forza neurale, il focus si sposta sull'isolamento e sulla
+                        <strong>biomeccanica dei movimenti accessori</strong> per massimizzare lo stimolo ipertrofico
+                        dove serve.
                     </p>
                 </div>
             </div>
 
         </div>
+    </section>
+
+    <!-- SEZIONE RISULTATI (EVIDENCE) -->
+    <section class="py-24 px-4 md:px-10 max-w-7xl mx-auto relative border-t border-white/5" id="evidence">
+
+        <!-- Intestazione Sezione -->
+        <div class="text-center mb-20 reveal-box">
+            <span class="text-yellow-500 font-bold tracking-widest text-[10px] uppercase mb-4 block">Portfolio</span>
+            <h2 class="text-4xl md:text-7xl font-bold text-white tracking-tighter">RISULTATI.</h2>
+            <p class="text-zinc-500 mt-4 text-sm md:text-lg font-light">Casi Studio Reali.</p>
+        </div>
+
+        <!-- 1. CASO FRANCESCO -->
+        <div class="mb-32 reveal-box">
+            <div class="flex items-end justify-between mb-6 px-2">
+                <div>
+                    <h3 class="text-2xl text-white font-bold">Francesco</h3>
+                    <p class="text-zinc-500 text-xs uppercase tracking-wider">Ottimizzazione Tecnica</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-yellow-500 font-mono text-xl md:text-3xl font-bold">+25 KG</p>
+                    <p class="text-zinc-600 text-[10px] uppercase">Incremento 1RM Squat</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-1 md:gap-4 h-[300px] md:h-[500px]">
+                <!-- Vecchio -->
+                <div
+                    class="glass-panel rounded-l-2xl md:rounded-2xl relative grayscale hover:grayscale-0 transition-all duration-500">
+                    <video loop muted playsinline class="lazy-video video-fill opacity-60">
+                        <source data-src="asset/squat_vecchio.mp4" type="video/mp4">
+                    </video>
+                    <div
+                        class="absolute top-4 left-4 bg-red-900/80 backdrop-blur px-3 py-1 text-[10px] font-bold text-white uppercase rounded">
+                        Prima: 150kg
+                    </div>
+                </div>
+
+                <!-- Nuovo -->
+                <div class="glass-panel rounded-r-2xl md:rounded-2xl relative border-yellow-500/20 border">
+                    <video loop muted playsinline class="lazy-video video-fill">
+                        <source data-src="asset/squat_nuovo.mp4" type="video/mp4">
+                    </video>
+                    <div
+                        class="absolute top-4 right-4 bg-green-900/80 backdrop-blur px-3 py-1 text-[10px] font-bold text-white uppercase rounded">
+                        Dopo: 175kg
+                    </div>
+                    <div
+                        class="absolute bottom-4 left-4 md:left-auto md:right-4 text-white text-[10px] md:text-xs font-mono bg-black/50 px-2 py-1 rounded border border-white/10">
+                        <span class="text-green-400">●</span> Valid Depth
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. CASO ALBERTO -->
+        <div class="mb-32 reveal-box">
+            <div class="flex items-end justify-between mb-6 px-2">
+                <div>
+                    <h3 class="text-2xl text-white font-bold">Alberto</h3>
+                    <p class="text-zinc-500 text-xs uppercase tracking-wider">Ricomposizione Corporea</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-blue-500 font-mono text-xl md:text-3xl font-bold">RECOMP</p>
+                    <p class="text-zinc-600 text-[10px] uppercase">- Massa Grassa / + Massa Magra</p>
+                </div>
+            </div>
+
+            <!-- Slider Alberto -->
+            <div class="glass-panel rounded-2xl w-full aspect-[4/5] md:aspect-[21/9] compare-container"
+                id="compare-alberto">
+                <img src="asset/alberto_dopo.jpg" alt="Alberto Dopo" class="compare-img">
+                <div class="compare-overlay" style="background-image: url('asset/alberto_prima.jpg');"></div>
+                <div class="compare-handle">
+                    <div class="compare-circle">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="3">
+                            <path d="M15 18l-6-6 6-6" />
+                        </svg>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="3">
+                            <path d="M9 18l6-6-6-6" />
+                        </svg>
+                    </div>
+                </div>
+                <div
+                    class="absolute bottom-4 left-4 pointer-events-none z-20 text-[10px] uppercase tracking-widest text-white/50 bg-black/50 px-2 rounded">
+                    Trascina</div>
+            </div>
+        </div>
+
+        <!-- 3. CASO FABRIZIO -->
+        <div class="reveal-box mt-32">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 px-2 gap-4">
+                <div>
+                    <div class="inline-block bg-zinc-800 border border-white/10 px-3 py-1 rounded-full mb-2">
+                        <span class="text-zinc-200 text-[10px] font-bold uppercase tracking-widest">Head Coach</span>
+                    </div>
+                    <h3 class="text-4xl md:text-5xl text-white font-bold tracking-tight">FABRIZIO GESUALDO.</h3>
+                    <p class="text-zinc-400 mt-2 text-sm max-w-md font-light">
+                        Applicazione pratica del metodo. Taglio calorico mantenendo carichi prestativi elevati.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-auto md:h-[700px]">
+
+                <!-- COLONNA 1: Slider Fisico (FIX POSIZIONE FOTO APPLICATO) -->
+                <div class="glass-panel rounded-2xl h-[500px] md:h-full compare-container shadow-2xl"
+                    id="compare-fabrizio">
+                    <!-- QUI C'È IL FIX: object-position: 85% per mostrare il braccio -->
+                    <img src="asset/fabrizio_fine.jpg" alt="Fabrizio Dopo"
+                        class="compare-img object-cover h-full w-full" style="object-position: 95% center;">
+
+                    <div class="compare-overlay"
+                        style="background-image: url('asset/fabrizio_inizio.jpg'); background-position: 50% center;">
+                    </div>
+
+                    <div class="compare-handle">
+                        <div class="compare-circle text-black text-xs font-bold">↔</div>
+                    </div>
+
+                    <div
+                        class="absolute top-4 left-4 z-20 bg-black/60 backdrop-blur px-3 py-1 rounded text-[10px] font-bold text-white uppercase border border-white/10">
+                        Physique
+                    </div>
+                </div>
+
+                <!-- COLONNA 2: Stacco -->
+                <div class="glass-panel rounded-2xl h-[500px] md:h-full relative overflow-hidden group shadow-2xl">
+                    <video loop muted playsinline class="lazy-video video-fill object-cover w-full h-full">
+                        <source data-src="asset/stacco_fabrizio_fine.mp4" type="video/mp4">
+                    </video>
+                    <div
+                        class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black via-black/50 to-transparent pt-20 pb-6 px-6">
+                        <h4 class="text-white font-bold text-lg md:text-xl">Stacco</h4>
+                        <div class="w-10 h-1 bg-yellow-500 mt-2 mb-2"></div>
+                        <p class="text-zinc-300 text-xs uppercase tracking-wider leading-relaxed">
+                            Mantenimento Forza
+                        </p>
+                    </div>
+                </div>
+
+                <!-- COLONNA 3: Squat -->
+                <div class="glass-panel rounded-2xl h-[500px] md:h-full relative overflow-hidden group shadow-2xl">
+                    <video loop muted playsinline class="lazy-video video-fill object-cover w-full h-full">
+                        <source data-src="asset/fabrizio_squat_fine.mp4" type="video/mp4">
+                    </video>
+                    <div
+                        class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black via-black/50 to-transparent pt-20 pb-6 px-6">
+                        <h4 class="text-white font-bold text-lg md:text-xl">Squat</h4>
+                        <div class="w-10 h-1 bg-blue-500 mt-2 mb-2"></div>
+                        <p class="text-zinc-300 text-xs uppercase tracking-wider leading-relaxed">
+                            Controllo Tecnico
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
     </section>
 
     <!-- CONTACT -->
-    <section id="contact" class="py-24 px-4 md:px-6 relative bg-zinc-900/30">
-        <div class="max-w-3xl mx-auto bg-black border border-white/10 rounded-[40px] p-8 md:p-16 text-center shadow-2xl reveal-box">
-            <h2 class="text-3xl md:text-6xl font-bold text-white mb-8">Un Patto Onesto.</h2>
-            
-            <div class="text-zinc-400 space-y-6 text-sm md:text-xl leading-relaxed mb-12 font-light">
-                <p>
-                    Non ti vendo 20 anni di esperienza che non ho, ma ti offro competenze certificate, risultati agonistici e una fame di successo unica.
-                </p>
-                <div class="bg-zinc-900/50 p-6 rounded-2xl border border-white/5 inline-block">
-                    <p class="text-white font-medium">
-                        "L'Eccellenza resa Accessibile"
-                    </p>
-                    <p class="text-zinc-500 text-sm mt-2">
-                        Il prezzo è basso perché investo su di te.<br>
-                        Tu sei la mia futura pubblicità.
-                    </p>
-                </div>
-            </div>
 
-            <div class="flex flex-col gap-4 md:flex-row md:justify-center">
-                <a href="https://wa.me/393515662347" class="bg-white text-black px-10 py-4 rounded-full font-bold text-sm md:text-base hover:bg-yellow-400 hover:scale-105 transition-all w-full md:w-auto shadow-lg shadow-white/10">
-                    Candidati su WhatsApp
-                </a>
-                <a href="mailto:fabriziogesualdopt@gmail.com" class="border border-white/20 text-white px-10 py-4 rounded-full font-bold text-sm md:text-base hover:bg-white/10 transition-colors w-full md:w-auto">
-                    Invia Email
-                </a>
-            </div>
+<section id="contact" class="py-24 px-4 md:px-6 relative bg-zinc-900/30">
+    <div class="max-w-3xl mx-auto bg-black border border-white/10 rounded-[40px] p-8 md:p-16 text-center shadow-2xl reveal-box">
+        <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">Inizia il Percorso.</h2>
+        
+        <p class="text-zinc-400 text-sm md:text-lg leading-relaxed mb-10 font-light max-w-xl mx-auto">
+            Per garantire la massima qualità del servizio, accetto un numero limitato di atleti.
+            Compila il modulo di candidatura per valutare se siamo il giusto match.
+        </p>
+
+        <div class="flex flex-col gap-4 justify-center items-center">
+            <!-- PULSANTE PRINCIPALE -->
+            <a href="questionario.html" class="bg-white text-black px-12 py-5 rounded-full font-bold text-base md:text-lg hover:bg-yellow-400 hover:scale-105 transition-all w-full md:w-auto shadow-lg shadow-white/10">
+                Compila il Modulo di Candidatura
+            </a>
             
-            <div class="mt-10 text-[10px] text-zinc-700 uppercase tracking-widest">
-                Fabrizio Gesualdo • Coach & Atleta
-            </div>
+            <!-- Link secondario piccolo -->
+            <a href="mailto:fabriziogesualdopt@gmail.com" class="text-zinc-500 text-xs uppercase tracking-widest hover:text-white mt-4 underline decoration-zinc-700 underline-offset-4">
+                Hai dubbi? Scrivimi una mail
+            </a>
         </div>
-    </section>
+        
+        <div class="mt-12 pt-12 border-t border-white/5 text-[10px] text-zinc-600 uppercase tracking-widest flex justify-between items-center">
+            <span>© 2024 Fabrizio Gesualdo</span>
+            <span>COACHING APPLICATION</span>
+        </div>
+    </div>
+</section>
 
     <script>
-        // LAZY LOAD VIDEO (Anti-Blocco Mobile)
-        document.addEventListener("DOMContentLoaded", function() {
-            // Hero
+        // LAZY LOAD & INIT
+        document.addEventListener("DOMContentLoaded", function () {
             const heroVideo = document.querySelector('.video-hero');
-            if(heroVideo) {
-                heroVideo.play().catch(() => { heroVideo.muted=true; heroVideo.play(); });
+            if (heroVideo) {
+                heroVideo.play().catch(() => { heroVideo.muted = true; heroVideo.play(); });
             }
 
-            // Lazy Videos
             var lazyVideos = [].slice.call(document.querySelectorAll("video.lazy-video"));
             if ("IntersectionObserver" in window) {
-                var lazyVideoObserver = new IntersectionObserver(function(entries, observer) {
-                    entries.forEach(function(video) {
+                var lazyVideoObserver = new IntersectionObserver(function (entries, observer) {
+                    entries.forEach(function (video) {
                         if (video.isIntersecting) {
                             for (var source in video.target.children) {
                                 var videoSource = video.target.children[source];
@@ -313,7 +554,7 @@
                         }
                     });
                 });
-                lazyVideos.forEach(function(lazyVideo) { lazyVideoObserver.observe(lazyVideo); });
+                lazyVideos.forEach(function (lazyVideo) { lazyVideoObserver.observe(lazyVideo); });
             }
         });
 
@@ -323,36 +564,24 @@
         requestAnimationFrame(raf);
 
         gsap.registerPlugin(ScrollTrigger);
-        
+
         const tl = gsap.timeline();
         tl.to("#loader-text", { opacity: 1, y: 0, duration: 1, ease: "power4.out" })
-          .to("#loader-text", { y: -50, opacity: 0, delay: 0.5, duration: 0.5 })
-          .to("#loader", { yPercent: -100, duration: 0.8, ease: "power4.inOut" })
-          .to(".hero-anim", { opacity: 1, y: 0, stagger: 0.15, duration: 1 });
+            .to("#loader-text", { y: -50, opacity: 0, delay: 0.5, duration: 0.5 })
+            .to("#loader", { yPercent: -100, duration: 0.8, ease: "power4.inOut" })
+            .to(".hero-anim", { opacity: 1, y: 0, stagger: 0.15, duration: 1 });
 
-        // ANIMAZIONE LINEA GIALLA (CAPITOLO 1)
+        // LINEE ANIMATE
         gsap.to("#line1", {
-            scrollTrigger: {
-                trigger: "#chapter1",
-                start: "top center",
-                end: "bottom center",
-                scrub: true
-            },
+            scrollTrigger: { trigger: "#chapter1", start: "top center", end: "bottom center", scrub: true },
             height: "100%"
         });
-
-        // ANIMAZIONE LINEA BLU (CAPITOLO 2)
         gsap.to("#line2", {
-            scrollTrigger: {
-                trigger: "#chapter3", // Assicurati che l'ID corrisponda alla sezione
-                start: "top center",
-                end: "bottom center",
-                scrub: true
-            },
+            scrollTrigger: { trigger: "#chapter3", start: "top center", end: "bottom center", scrub: true },
             height: "100%"
         });
 
-        // Reveal standard
+        // REVEAL
         const revealElements = document.querySelectorAll('h2, .reveal-box');
         revealElements.forEach(el => {
             gsap.from(el, {
@@ -360,6 +589,35 @@
                 y: 40, opacity: 0, duration: 1, ease: "power3.out"
             });
         });
+
+        // SLIDER LOGIC
+        function initComparisons() {
+            const containers = document.querySelectorAll('.compare-container');
+            containers.forEach(container => {
+                const overlay = container.querySelector('.compare-overlay');
+                const handle = container.querySelector('.compare-handle');
+
+                function slideMove(e) {
+                    const rect = container.getBoundingClientRect();
+                    let x = getCursorPos(e) - rect.left;
+                    if (x < 0) x = 0;
+                    if (x > rect.width) x = rect.width;
+                    const percent = (x / rect.width) * 100;
+                    overlay.style.clipPath = `inset(0 ${100 - percent}% 0 0)`;
+                    handle.style.left = `${percent}%`;
+                }
+
+                function getCursorPos(e) {
+                    e = (e.changedTouches) ? e.changedTouches[0] : e;
+                    return e.pageX;
+                }
+
+                container.addEventListener('mousemove', slideMove);
+                container.addEventListener('touchmove', (e) => { e.preventDefault(); slideMove(e); });
+            });
+        }
+        initComparisons();
     </script>
 </body>
+
 </html>
